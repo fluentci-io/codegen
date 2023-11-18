@@ -9,8 +9,8 @@ import (
 	"github.com/vito/progrock/console"
 
 	"dagger.io/dagger"
-	"github.com/dagger/dagger/cmd/codegen/generator"
 	"github.com/dagger/dagger/core/modules"
+	"github.com/fluentci-io/codegen/generator"
 )
 
 var (

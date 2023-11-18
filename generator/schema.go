@@ -1,6 +1,6 @@
 package generator
 
-import "github.com/dagger/dagger/cmd/codegen/introspection"
+import "github.com/fluentci-io/codegen/introspection"
 
 var _schema *introspection.Schema
 

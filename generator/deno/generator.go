@@ -1,4 +1,4 @@
-package nodegenerator
+package denogenerator
 
 import (
 	"bytes"
@@ -6,19 +6,19 @@ import (
 	"sort"
 
 	"github.com/fluentci-io/codegen/generator"
-	"github.com/fluentci-io/codegen/generator/nodejs/templates"
+	"github.com/fluentci-io/codegen/generator/deno/templates"
 	"github.com/fluentci-io/codegen/introspection"
 	"github.com/psanford/memfs"
 )
 
-const ClientGenFile = "client.gen.ts"
+const ClientGenFile = ".fluentci/sdk/client.gen.ts"
 
-type NodeGenerator struct {
+type DenoGenerator struct {
 	Config generator.Config
 }
 
 // Generate will generate the NodeJS SDK code and might modify the schema to reorder types in a alphanumeric fashion.
-func (g *NodeGenerator) Generate(_ context.Context, schema *introspection.Schema) (*generator.GeneratedState, error) {
+func (g *DenoGenerator) Generate(_ context.Context, schema *introspection.Schema) (*generator.GeneratedState, error) {
 	generator.SetSchema(schema)
 
 	sort.SliceStable(schema.Types, func(i, j int) bool {
@@ -49,6 +49,10 @@ func (g *NodeGenerator) Generate(_ context.Context, schema *introspection.Schema
 	}
 
 	mfs := memfs.New()
+
+	if err := mfs.MkdirAll(".fluentci/sdk", 0755); err != nil {
+		return nil, err
+	}
 
 	if err := mfs.WriteFile(ClientGenFile, b.Bytes(), 0600); err != nil {
 		return nil, err

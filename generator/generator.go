@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 
 	"dagger.io/dagger"
-	"github.com/dagger/dagger/cmd/codegen/introspection"
 	"github.com/dagger/dagger/core/modules"
+	"github.com/fluentci-io/codegen/introspection"
 )
 
 var ErrUnknownSDKLang = errors.New("unknown sdk language")
@@ -20,8 +20,8 @@ var ErrUnknownSDKLang = errors.New("unknown sdk language")
 type SDKLang string
 
 const (
-	SDKLangGo     SDKLang = "go"
 	SDKLangNodeJS SDKLang = "nodejs"
+	SDKLangDeno   SDKLang = "deno"
 )
 
 type Config struct {

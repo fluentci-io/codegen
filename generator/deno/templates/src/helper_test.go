@@ -6,7 +6,7 @@ import (
 	"testing"
 	"text/template"
 
-	"github.com/fluentci-io/codegen/generator/nodejs/templates"
+	"github.com/fluentci-io/codegen/generator/deno/templates"
 	"github.com/stretchr/testify/require"
 )
 
