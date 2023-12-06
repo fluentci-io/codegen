@@ -72,7 +72,8 @@ export async function fmt(
  * @returns {Directory | string}
  */
 export async function build(
-  src: Directory | string | undefined = "."
+  src: Directory | string | undefined = ".",
+  version: string = "latest"
 ): Promise<Directory | string> {
   let id = "";
   await connect(async (client: Client) => {
@@ -85,9 +86,26 @@ export async function build(
       .withWorkdir("/app")
       .withMountedCache("/go/pkg/mod", client.cacheVolume("go-mod"))
       .withMountedCache("/root/.cache/go-build", client.cacheVolume("go-build"))
-      .withExec(["go", "build"]);
+      .withExec(["go", "build"])
+      .withExec([
+        "tar",
+        "-czf",
+        `codegen_${version}_x86_64_unknown_linux-gnu.tar.gz`,
+        "codegen",
+      ])
+      .withExec([
+        "sh",
+        "-c",
+        `sha256sum codegen_${version}_x86_64_unknown_linux-gnu.tar.gz > codegen_${version}_x86_64_unknown_linux-gnu.tar.gz.sha256`,
+      ]);
     await ctr.stdout();
     id = await ctr.directory("/app/").id();
+    await ctr
+      .file(`/app/codegen_${version}_x86_64_unknown_linux-gnu.tar.gz`)
+      .export(`codegen_${version}_x86_64_unknown_linux-gnu.tar.gz`);
+    await ctr
+      .file(`/app/codegen_${version}_x86_64_unknown_linux-gnu.tar.gz.sha256`)
+      .export(`codegen_${version}_x86_64_unknown_linux-gnu.tar.gz.sha256`);
   });
   return id;
 }
