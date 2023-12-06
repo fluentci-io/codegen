@@ -73,7 +73,7 @@ export async function fmt(
  */
 export async function build(
   src: Directory | string | undefined = ".",
-  version: string = "latest"
+  version: string = Deno.env.get("RELEASE_VERSION") || "latest"
 ): Promise<Directory | string> {
   let id = "";
   await connect(async (client: Client) => {
@@ -84,28 +84,23 @@ export async function build(
       .from("golang:latest")
       .withDirectory("/app", context, { exclude })
       .withWorkdir("/app")
+      .withMountedCache("/assets", client.cacheVolume("gh-release-assets"))
       .withMountedCache("/go/pkg/mod", client.cacheVolume("go-mod"))
       .withMountedCache("/root/.cache/go-build", client.cacheVolume("go-build"))
       .withExec(["go", "build"])
       .withExec([
         "tar",
         "-czf",
-        `codegen_${version}_x86_64_unknown_linux-gnu.tar.gz`,
+        `/assets/codegen_${version}_x86_64_unknown_linux-gnu.tar.gz`,
         "codegen",
       ])
       .withExec([
         "sh",
         "-c",
-        `sha256sum codegen_${version}_x86_64_unknown_linux-gnu.tar.gz > codegen_${version}_x86_64_unknown_linux-gnu.tar.gz.sha256`,
+        `sha256sum /assets/codegen_${version}_x86_64_unknown_linux-gnu.tar.gz > /assets/codegen_${version}_x86_64_unknown_linux-gnu.tar.gz.sha256`,
       ]);
     await ctr.stdout();
     id = await ctr.directory("/app/").id();
-    await ctr
-      .file(`/app/codegen_${version}_x86_64_unknown_linux-gnu.tar.gz`)
-      .export(`codegen_${version}_x86_64_unknown_linux-gnu.tar.gz`);
-    await ctr
-      .file(`/app/codegen_${version}_x86_64_unknown_linux-gnu.tar.gz.sha256`)
-      .export(`codegen_${version}_x86_64_unknown_linux-gnu.tar.gz.sha256`);
   });
   return id;
 }
