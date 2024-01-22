@@ -6,8 +6,9 @@ import (
 	"testing"
 	"text/template"
 
-	"github.com/fluentci-io/codegen/generator/deno/templates"
 	"github.com/stretchr/testify/require"
+
+	"github.com/fluentci-io/codegen/generator/deno/templates"
 )
 
 var updateFixtures = flag.Bool("test.update-fixtures", false, "update the test fixtures")
