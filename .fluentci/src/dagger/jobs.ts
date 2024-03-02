@@ -26,7 +26,7 @@ export async function test(
     const ctr = client
       .pipeline(Job.test)
       .container()
-      .from("golang:latest")
+      .from("golang:1.22.0")
       .withDirectory("/app", context, { exclude })
       .withWorkdir("/app")
       .withMountedCache("/go/pkg/mod", client.cacheVolume("go-mod"))
@@ -52,7 +52,7 @@ export async function fmt(
     const ctr = client
       .pipeline(Job.fmt)
       .container()
-      .from("golang:latest")
+      .from("golang:1.22.0")
       .withDirectory("/app", context, { exclude })
       .withMountedCache("/go/pkg/mod", client.cacheVolume("go-mod"))
       .withMountedCache("/root/.cache/go-build", client.cacheVolume("go-build"))
@@ -81,7 +81,7 @@ export async function build(
     const ctr = client
       .pipeline(Job.build)
       .container()
-      .from("golang:latest")
+      .from("golang:1.22.0")
       .withDirectory("/app", context, { exclude })
       .withWorkdir("/app")
       .withMountedCache("/assets", client.cacheVolume("gh-release-assets"))
